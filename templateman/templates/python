@@ -1,0 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+{% if modules | length %}
+
+{% for module in modules %}
+import {{ module }}
+{% endfor %}
+{% endif %}
+
+if __name__ == "__main__":
+    pass

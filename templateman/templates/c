@@ -1,0 +1,10 @@
+{% if includes | length %}
+{% for include in includes %}
+#include <{{ include }}>
+{% endfor %}
+
+{% endif %}
+int main(int argc, char *argv[])
+{
+    return 0;
+}
