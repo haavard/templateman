@@ -4,7 +4,7 @@ PREFIX = /usr/local
 CC = cc
 LD = cc
 
-CFLAGS += {{ cflags | default('-std=c11 -Wall') }}
+CFLAGS += {{ cflags | default("-std=c11 -Wall") }}
 LDFLAGS += {{ ldflags }}
 
 SRC = $(shell find . -name '*.c')
