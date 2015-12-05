@@ -1,0 +1,32 @@
+TARGET = {{ target_name }}
+PREFIX = /usr/local
+
+CC = cc
+LD = cc
+
+CFLAGS += {{ cflags | default('-std=c11 -Wall') }}
+LDFLAGS += {{ ldflags }}
+
+SRC = $(shell find . -name '*.c')
+OBJ = ${SRC:.c=.o}
+
+all: ${TARGET}
+
+${TARGET}: ${OBJ}
+	${LD} ${LDFLAGS} -o $@ $<
+
+.c.o: $(DEPS)
+	${CC} -MMD ${CFLAGS} -c -o $@ $<
+
+install: all
+	install -Dm755 ${TARGET} "${DESTDIR}${PREFIX}/bin"
+
+uninstall:
+	rm "${DESTDIR}${PREFIX}/bin/${TARGET}"
+
+clean:
+	rm -rf *.d *.o ${TARGET}
+
+.PHONY: all install clean
+
+-include *.d
