@@ -13,7 +13,7 @@ OBJ = ${SRC:.c=.o}
 all: ${TARGET}
 
 ${TARGET}: ${OBJ}
-	${LD} ${LDFLAGS} -o $@ $<
+	${LD} ${LDFLAGS} -o $@ $^
 
 .c.o: $(DEPS)
 	${CC} ${CFLAGS} -MMD -c -o $@ $<
