@@ -35,14 +35,14 @@ def find_user_bindings(root):
     # find names with default values
     for filter_node in root.find_all(jinja2.nodes.Filter):
         if filter_node.name == "default" \
-        and type(filter_node.node) == jinja2.nodes.Name \
-        and type(filter_node.args[0]) == jinja2.nodes.Const:
+         and type(filter_node.node) == jinja2.nodes.Name \
+         and type(filter_node.args[0]) == jinja2.nodes.Const:
             defaults[filter_node.node.name] = filter_node.args[0].value
 
     return names, iterables, defaults
 
 
-@click.command(context_settings={ "help_option_names": ("-h", "--help") })
+@click.command(context_settings={"help_option_names": ("-h", "--help")})
 @click.argument("template_name")
 @click.argument("output_file", required=False, type=click.File(mode="w"))
 @click.option("--template-dir", "-d", multiple=True,
@@ -67,7 +67,8 @@ def main(template_name, output_file, template_dir, builtin, prompt):
         3. Built-in templates included with the program
     """
     search_dirs = template_dir + (DEFAULT_TEMPLATE_DIR,)
-    fs_loader = jinja2.FileSystemLoader(searchpath=search_dirs, followlinks=True)
+    fs_loader = jinja2.FileSystemLoader(searchpath=search_dirs,
+                                        followlinks=True)
     pkg_loader = jinja2.PackageLoader("templateman", "templates")
 
     loaders = (pkg_loader, fs_loader) if builtin else (fs_loader, pkg_loader)
@@ -107,3 +108,6 @@ def main(template_name, output_file, template_dir, builtin, prompt):
     # output rendered template
     click.echo(template.render(values), output_file)
 
+
+if __name__ == "__main__":
+    main()
