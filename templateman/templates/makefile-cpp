@@ -1,0 +1,26 @@
+TARGET = {{ target_name }}
+PREFIX = /usr/local
+
+CXXFLAGS += {{ cxxflags | default("-MMD -std=c++14 -Wall -g") }}
+LDFLAGS += {{ ldflags }}
+LDLIBS += {{ ldlibs | default("-lstdc++") }}
+
+SRC = {{ src | default("$(shell find . -name '*.cpp')") }}
+OBJ = ${SRC:.cpp=.o}
+
+${TARGET}: ${OBJ}
+
+all: ${TARGET}
+
+install: all
+	install -Dm755 ${TARGET} "${DESTDIR}${PREFIX}/bin"
+
+uninstall:
+	${RM} "${DESTDIR}${PREFIX}/bin/${TARGET}"
+
+clean:
+	${RM} *.d *.o ${TARGET}
+
+.PHONY: all install uninstall clean
+
+-include *.d

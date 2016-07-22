@@ -1,22 +1,16 @@
 TARGET = {{ target_name }}
 PREFIX = /usr/local
 
-CC = cc
-LD = cc
-
-CFLAGS += {{ cflags | default("-std=c11 -Wall") }}
+CFLAGS += {{ cflags | default("-MMD -std=c11 -Wall -g") }}
 LDFLAGS += {{ ldflags }}
+LDLIBS += {{ ldlibs }}
 
-SRC = $(shell find . -name '*.c')
-OBJ = ${SRC:.c=.o}
-
-all: ${TARGET}
+SRC = {{ src | default("$(shell find . -name '*.c')") }}
+OBJ = ${CSRC:.c=.o}
 
 ${TARGET}: ${OBJ}
-	${LD} ${LDFLAGS} -o $@ $^
 
-.c.o: $(DEPS)
-	${CC} ${CFLAGS} -MMD -c -o $@ $<
+all: ${TARGET}
 
 install: all
 	install -Dm755 ${TARGET} "${DESTDIR}${PREFIX}/bin"
