@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import os
 import sys
 import re
@@ -6,20 +9,13 @@ import collections
 import click
 import jinja2
 
-DEFAULT_TEMPLATE_DIR = os.path.expanduser("~/.templates/")
 
-
-def find_user_bindings(root):
+def find_names(root):
     """
     Find all names in an AST that should be provided when rendering.
-
-    Return a list of names, a set of names that should be iterable, and a
-    dictionary of values extracted from the Jinja 'default' filter.
     """
     names = []
     seen_names = set()
-    iterables = set()
-    defaults = collections.defaultdict(str)
 
     # find all names with context "load"
     for node in root.find_all(jinja2.nodes.Name):
@@ -27,10 +23,28 @@ def find_user_bindings(root):
             names.append(node.name)
         seen_names.add(node.name)
 
+    return names
+
+
+def find_iterables(root):
+    """
+    Find all names that are used as iterables in the template.
+    """
+    iterables = set()
+
     # identify names that are iterables
     for for_node in root.find_all(jinja2.nodes.For):
         if type(for_node.iter) == jinja2.nodes.Name:
             iterables.add(for_node.iter.name)
+
+    return iterables
+
+
+def find_default_values(root):
+    """
+    Find default values from occurrences of the 'default' filter.
+    """
+    defaults = collections.defaultdict(str)
 
     # find names with default values
     for filter_node in root.find_all(jinja2.nodes.Filter):
@@ -39,7 +53,7 @@ def find_user_bindings(root):
          and type(filter_node.args[0]) == jinja2.nodes.Const:
             defaults[filter_node.node.name] = filter_node.args[0].value
 
-    return names, iterables, defaults
+    return defaults
 
 
 @click.command(context_settings={"help_option_names": ("-h", "--help")})
@@ -51,9 +65,10 @@ def find_user_bindings(root):
 @click.option("--builtin", is_flag=True, default=False,
               help="Look for built-in templates before searching other "
               "directories.")
-@click.option("--prompt/--no-prompt", default=True,
-              help="Toggle questions about template values.")
-def main(template_name, output_file, template_dir, builtin, prompt):
+@click.option("--interactive/--batch", default=True,
+              help="Interactively prompt for template values, or use default "
+              "values for all fields.")
+def main(template_name, output_file, template_dir, builtin, interactive):
     """
     Render TEMPLATE_NAME to OUTPUT_FILE or stdout.
 
@@ -66,7 +81,8 @@ def main(template_name, output_file, template_dir, builtin, prompt):
         2. ~/.templates/
         3. Built-in templates included with the program
     """
-    search_dirs = template_dir + (DEFAULT_TEMPLATE_DIR,)
+    search_dirs = template_dir + (os.path.expanduser("~/.templates/"),)
+
     fs_loader = jinja2.FileSystemLoader(searchpath=search_dirs,
                                         followlinks=True)
     pkg_loader = jinja2.PackageLoader("templateman", "templates")
@@ -80,28 +96,25 @@ def main(template_name, output_file, template_dir, builtin, prompt):
     try:
         template = environment.get_template(template_name)
         source = loader.get_source(environment, template_name)
-        err = None
     except jinja2.exceptions.TemplateNotFound:
-        err = "Error: template '{}' not found".format(template_name)
+        raise click.FileError(template_name, hint="template not found")
     except jinja2.exceptions.TemplateSyntaxError as e:
-        err = "Syntax error in template '{}': {}".format(template_name, e)
-
-    # exit on error
-    if err:
-        click.echo(err, err=True)
-        sys.exit(1)
+        err = "Syntax error in template {}: {}".format(template_name, e)
+        raise click.ClickException(err)
 
     # extract user-provided names from template
     ast = environment.parse(source)
-    names, iterables, defaults = find_user_bindings(ast)
+    names = find_names(ast)
+    iterables = find_iterables(ast)
+    defaults = find_default_values(ast)
 
     # prompt user for values
     values = {}
-    if prompt:
+    if interactive:
         for name in names:
             value = click.prompt(name, default=defaults[name], err=True)
             if name in iterables:
-                values[name] = list(filter(None, re.split("\s+", value)))
+                values[name] = list(re.split("\s+", value))
             else:
                 values[name] = value
 
