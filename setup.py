@@ -1,9 +1,13 @@
 from setuptools import setup
 
+with open("README") as readme_file:
+    readme_data = readme_file.read()
+
 setup(
     name="templateman",
     use_scm_version=True,
     description="Create new files from templates interactively.",
+    long_description=readme_data,
     author="Håvard Pettersson",
     author_email="mail@haavard.me",
     url="https://github.com/haavardp/templateman",
@@ -17,12 +21,11 @@ setup(
 
     setup_requires=["setuptools_scm"],
     install_requires=[
-        "Click",
-        "Jinja2"
+        "click",
+        "jinja2"
     ],
 
-    packages=["templateman"],
-    package_data={"templateman": ["templates/*"]},
+    package_data={"": ["templates/*"]},
 
     entry_points="""
         [console_scripts]
