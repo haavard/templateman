@@ -78,10 +78,10 @@ def main(template_name, output_file, template_dir, builtin, interactive):
     \b
     Templates are looked for in the following locations:
         1. Directories specified with the -d option
-        2. ~/.templates/
+        2. ~/.templateman/
         3. Built-in templates included with the program
     """
-    search_dirs = template_dir + (os.path.expanduser("~/.templates/"),)
+    search_dirs = template_dir + (os.path.expanduser("~/.templateman/"),)
 
     fs_loader = jinja2.FileSystemLoader(searchpath=search_dirs,
                                         followlinks=True)
