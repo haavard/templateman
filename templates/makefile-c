@@ -6,7 +6,7 @@ LDFLAGS += {{ ldflags }}
 LDLIBS += {{ ldlibs }}
 
 SRC = {{ src | default("$(shell find . -name '*.c')") }}
-OBJ = ${CSRC:.c=.o}
+OBJ = ${SRC:.c=.o}
 
 ${TARGET}: ${OBJ}
 
