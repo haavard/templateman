@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="templateman",
-    version="0.1",
+    use_scm_version=True,
     description="Create new files from templates interactively.",
     author="Håvard Pettersson",
     author_email="mail@haavard.me",
@@ -15,6 +15,7 @@ setup(
         "Programming Language :: Python :: 3",
     ],
 
+    setup_requires=["setuptools_scm"],
     install_requires=[
         "Click",
         "Jinja2"
