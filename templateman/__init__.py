@@ -63,7 +63,7 @@ def find_default_values(root):
               type=click.Path(file_okay=False, resolve_path=True),
               help="Specify directories used to find template files.")
 @click.option("--builtin", is_flag=True, default=False,
-              help="Look for built-in templates before searching other "
+              help="Look for built-in templates before looking in other "
               "directories.")
 @click.option("--interactive/--batch", default=True,
               help="Interactively prompt for template values, or use default "
