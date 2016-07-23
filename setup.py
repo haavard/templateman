@@ -7,6 +7,13 @@ setup(
     author="Håvard Pettersson",
     author_email="mail@haavard.me",
     url="https://github.com/haavardp/templateman",
+    classifiers=[
+        "License :: OSI Approved :: ISC License (ISCL)",
+        "Topic :: Software Development",
+        "Environment :: Console",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 3",
+    ],
 
     install_requires=[
         "Click",
