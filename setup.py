@@ -15,11 +15,15 @@ setup(
     author_email="mail@haavard.me",
     url="https://github.com/haavardp/templateman",
     classifiers=[
+        "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: ISC License (ISCL)",
         "Topic :: Software Development",
+        "Intended Audience :: Developers",
         "Environment :: Console",
+        "Natural Language :: English",
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
+        "Operating System :: OS Independent",
     ],
 
     setup_requires=["setuptools_scm"],
