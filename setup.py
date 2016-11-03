@@ -32,7 +32,8 @@ setup(
         "jinja2"
     ],
 
-    package_data={"": ["templates/*"]},
+    packages=["templateman"],
+    package_data={"templateman": ["templates/*"]},
 
     entry_points="""
         [console_scripts]
